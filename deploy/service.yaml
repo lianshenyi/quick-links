@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: quick-links-web
+  namespace: quick-links
+  labels:
+    app.kubernetes.io/name: quick-links
+    app.kubernetes.io/component: web
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: quick-links
+    app.kubernetes.io/component: web
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      protocol: TCP

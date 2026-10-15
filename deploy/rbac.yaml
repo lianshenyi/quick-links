@@ -1,0 +1,68 @@
+# Jenkins Agent Pod 运行在 jenkins namespace；前面的 RoleBinding 仅授予它发布
+# quick-links-web 和读取 rollout 状态所需的 namespaced 权限。
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: quick-links-deployer
+  namespace: jenkins
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: quick-links-deployer
+  namespace: quick-links
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["quick-links-web"]
+    verbs: ["get", "patch"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: quick-links-deployer
+  namespace: quick-links
+subjects:
+  - kind: ServiceAccount
+    name: quick-links-deployer
+    namespace: jenkins
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: quick-links-deployer
+---
+# 构建期采集集群对外路由（scripts/sync-cluster-links.ts）所需的集群级只读权限。
+# 该脚本在 validate 阶段的 Agent Pod 内以 Pod 自身 ServiceAccount 直连 K8s API，
+# 需要跨 namespace 列出 ApisixRoute 与 Ingress；不含 Secret 等敏感资源。
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: quick-links-route-reader
+rules:
+  - apiGroups: ["apisix.apache.org"]
+    resources: ["apisixroutes"]
+    verbs: ["get", "list"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: quick-links-route-reader
+subjects:
+  # 填入构建 Agent Pod 实际使用的 ServiceAccount；若日后 validate Pod 改用
+  # quick-links-deployer，此处需同步更换 subject。
+  - kind: ServiceAccount
+    name: jenkins-agent-sa
+    namespace: jenkins
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: quick-links-route-reader

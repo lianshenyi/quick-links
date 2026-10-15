@@ -1,0 +1,22 @@
+# 模板：复制为 config/links.yaml 后填入实际内容（该文件已在 .gitignore 中）。
+# 字段 schema 与校验详见 README「配置格式」以及 scripts/validate-config.ts。
+#
+# - 必填：title、分类与链接的 id / name、url（HTTPS 绝对地址）。
+# - 可选：description（卡片副标题），省略时只展示名称与域名。
+# - ID（分类、链接）全局唯一，建议小写英文 / 数字 / 连字符。
+# - categories 按 YAML 声明顺序渲染；空分类不展示。
+#
+# 下面的内容是一份可直接运行的示例，替换掉即可。
+
+title: 常用链接
+categories:
+  - id: example
+    name: 示例分类
+    links:
+      - id: example-site
+        name: 示例站点
+        url: https://example.com
+        description: 带描述的链接
+      - id: example-docs
+        name: 示例文档
+        url: https://example.org

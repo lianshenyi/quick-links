@@ -1,0 +1,18 @@
+// 流水线本体（构建镜像、推送、kubectl rollout）由全局共享库里的 webAppPipeline 提供，
+// 本文件只负责声明这个应用需要的参数。若不使用共享库，可换成自己的 Jenkinsfile，
+// 等价逻辑见 README「发布」一节。
+@Library('your-shared-library@main') _
+
+webAppPipeline(
+  image: 'quick-links/web',
+  namespace: 'quick-links',
+  deployment: 'quick-links-web',
+  container: 'web',
+  credentialsId: 'registry-push-credentials',
+  validate: [
+    image: 'node:22-alpine',
+    // sync-cluster-links 在 Pod 内经 ServiceAccount 直连 K8s API 采集集群路由，
+    // 产物随 workspace 进入 docker build context，打进镜像。
+    command: 'npm ci && npm run validate-config && npm test && npm run sync-cluster-links'
+  ]
+)

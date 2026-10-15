@@ -1,0 +1,38 @@
+{
+  "name": "quick-links",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "npm run generate-config",
+    "dev": "vite",
+    "pretest": "npm run generate-config",
+    "pretest:watch": "npm run generate-config",
+    "validate-config": "tsx scripts/validate-config.ts",
+    "sync-cluster-links": "tsx scripts/sync-cluster-links.ts",
+    "generate-config": "tsx scripts/generate-links.ts",
+    "prebuild": "npm run validate-config && npm run sync-cluster-links && npm run generate-config",
+    "build": "tsc -b && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "yaml": "^2.8.1",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.2",
+    "jsdom": "^26.1.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5",
+    "vitest": "^3.2.4"
+  }
+}

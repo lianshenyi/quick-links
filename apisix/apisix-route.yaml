@@ -1,0 +1,17 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: quick-links-web
+  namespace: quick-links
+spec:
+  ingressClassName: apisix
+  http:
+    - name: web
+      match:
+        hosts:
+          - links.example.com
+        paths:
+          - "/*"
+      backends:
+        - serviceName: quick-links-web
+          servicePort: 8080
