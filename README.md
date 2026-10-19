@@ -21,7 +21,7 @@ npm test
 npm run build
 ```
 
-`npm run build` 会先执行 YAML 校验。校验要求 `title`、分类和链接的 `id/name`、链接 `url` 均存在；所有分类/链接 ID 全局唯一，URL 必须是绝对 `https://` 地址。空分类会被页面隐藏；没有可显示链接时展示空状态。
+`npm run build` 会先执行 YAML 校验。校验要求 `title`、分类和链接的 `id/name`、链接 `url` 均存在；所有分类、链接、业务 ID 全局唯一；链接 `url` 必须是绝对 `https://` 地址，业务域名 `url` 允许 `http://`（测试环境）或 `https://`；可选字段 `description`、`snippet`、`frontend`、`backend` 若提供则不能为空。空分类会被页面隐藏；没有可显示链接时展示空状态。
 
 ## 配置格式
 
@@ -38,6 +38,33 @@ categories:
         url: https://platform.deepseek.com/top_up
         description: 可选说明
 ```
+
+`description` 只适合一句话摘要。需要展示多行查询语法或命令时用可选的 `snippet`（YAML 字面块 `|`），默认折叠在卡片底部，点开后显示等宽代码块并带复制按钮：
+
+```yaml
+      - id: openobserve
+        name: OpenObserve
+        url: https://observe.example.com
+        description: 日志查询
+        snippet: |
+          SELECT *
+          FROM logs
+          LIMIT 100
+```
+
+需要给开发同学展示 nginx 业务域名与前后端映射时，用可选的顶层 `services`；页面会在分类下方渲染轻量表格（域名可点击，`ip:端口` 等宽显示），移动端自动堆叠为卡片：
+
+```yaml
+services:
+  - id: order
+    name: 订单系统
+    url: http://order.example.com
+    frontend: 10.0.0.11:8080
+    backend: 10.0.0.12:9090
+    description: 订单创建、支付回调
+```
+
+`name`、`url` 必填（`url` 支持 HTTP/HTTPS，测试环境可直接写 `http://`）；`frontend`、`backend`、`description` 可选，缺失时显示 `—`。
 
 ## 发布
 

@@ -3,7 +3,10 @@
 #
 # - 必填：title、分类与链接的 id / name、url（HTTPS 绝对地址）。
 # - 可选：description（卡片副标题），省略时只展示名称与域名。
-# - ID（分类、链接）全局唯一，建议小写英文 / 数字 / 连字符。
+# - 可选：snippet（多行代码/查询语法），以 YAML 字面块 | 书写，页面卡片内折叠展示。
+# - 可选：services（业务域名表），frontend/backend 填 ip:端口，页面以表格展示。
+#   services[].url 支持 https:// 与 http://（测试环境）。
+# - ID（分类、链接、业务）全局唯一，建议小写英文 / 数字 / 连字符。
 # - categories 按 YAML 声明顺序渲染；空分类不展示。
 #
 # 下面的内容是一份可直接运行的示例，替换掉即可。
@@ -20,3 +23,15 @@ categories:
       - id: example-docs
         name: 示例文档
         url: https://example.org
+        snippet: |
+          SELECT *
+          FROM logs
+          LIMIT 100
+
+services:
+  - id: example-service
+    name: 示例业务
+    url: http://service.example.com
+    frontend: 10.0.0.11:8080
+    backend: 10.0.0.12:9090
+    description: 前端与后端映射示例

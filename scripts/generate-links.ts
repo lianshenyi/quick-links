@@ -14,7 +14,7 @@ let config: LinksConfig = manual
 if (existsSync('src/generated/cluster-links.json')) {
   const clusterLinks = JSON.parse(await readFile('src/generated/cluster-links.json', 'utf8')) as LinksConfig['categories'][number]['links']
   config = parseLinksConfig({
-    title: manual.title,
+    ...manual,
     categories: [
       ...manual.categories,
       { id: 'k8s-cluster', name: 'k8s集群', links: clusterLinks },
